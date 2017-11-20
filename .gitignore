@@ -1,3 +1,13 @@
+# OS files
+.DS_Store
+
+# IDE files
+.c9/
+.vscode/
+
+# Database
+*.sqlite
+
 *.py[cod]
 
 # C extensions
