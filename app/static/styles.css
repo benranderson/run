@@ -1,0 +1,43 @@
+.jumbotron {
+    /* font-family: 'Source Sans Pro', sans-serif; */
+    /* padding: 20 !important; */
+    color: #FFFFFF;
+    background-color: #FF5722;
+    text-align: center;
+}
+
+
+/* footer */
+
+footer {
+  margin-top: 45px;
+  padding-top: 5px;
+  border-top: 1px solid #eaeaea;
+  color: #999999;
+}
+
+footer a {
+  color: #999999;
+}
+
+footer p {
+  float: right;
+}
+
+footer ul {
+  list-style: none;
+}
+
+footer ul li {
+  float: left;
+}
+
+footer .company {
+  float: left;
+}
+
+footer .footer-nav {
+  float: right;
+  margin-right: 25px;
+  list-style: none;
+}

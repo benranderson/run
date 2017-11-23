@@ -1,16 +1,42 @@
 from datetime import datetime
-from . import db
+from flask_admin import BaseView, expose
+from flask_admin.contrib.sqla import ModelView
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin
+from . import db, admin, login_manager
 from .exceptions import ValidationError
 
 
-class User(db.Model):
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+
+class User(UserMixin, db.Model):
+
     __tablename__ = 'users'
+
     id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(64), unique=True, index=True)
     username = db.Column(db.String(64), unique=True, index=True)
-    plan_id = db.Column(db.Integer, db.ForeignKey('plans.id'))
+    password_hash = db.Column(db.String(128))
+    plans = db.relationship(
+        'Plan', backref='user', lazy='dynamic',
+        cascade='all, delete-orphan')
 
     def __repr__(self):
         return f'< {self.__class__.__name__} {self.username}>'
+
+    @property
+    def password(self):
+        raise AttributeError('password is not a readable attribute')
+
+    @password.setter
+    def password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def verify_password(self, password):
+        return check_password_hash(self.password_hash, password)
 
 
 class Exercise(db.Model):
@@ -45,7 +71,7 @@ class Workout(db.Model):
     __tablename__ = 'workouts'
 
     id = db.Column(db.Integer, primary_key=True)
-    date = db.Column(db.DateTime, default=datetime.now)
+    date = db.Column(db.Date, default=datetime.now)
     category = db.Column(db.String(128))
     workoutsets = db.relationship(
         'WorkoutSet', backref='workout', lazy='dynamic',
@@ -62,7 +88,7 @@ class Plan(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     level = db.Column(db.String(64))
-    start_date = db.Column(db.DateTime, default=datetime.now)
+    start_date = db.Column(db.Date, default=datetime.now)
     workouts = db.relationship(
         'Workout', backref='plan', lazy='dynamic',
         cascade='all, delete-orphan')
@@ -76,7 +102,7 @@ class Plan(db.Model):
         '''
         Creates schedule based on ability level and training days
         '''
-        pass
+        print(days)
 
 
 class Event(db.Model):
@@ -85,7 +111,8 @@ class Event(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
-    distance = db.Column(db.Numeric)
+    distance = db.Column(db.String(64))
+    date = db.Column(db.Date, nullable=False)
     plans = db.relationship('Plan', backref='event', lazy='dynamic')
 
     def __repr__(self):
@@ -98,3 +125,12 @@ class Event(db.Model):
         except KeyError as e:
             raise ValidationError('Invalid event: missing ' + e.args[0])
         return self
+
+
+class MyView(BaseView):
+    @expose('/')
+    def index(self):
+        return 'Hello World!'
+
+
+admin.add_view(ModelView(Event, db.session))

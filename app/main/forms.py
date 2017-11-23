@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, SelectField
+from wtforms import StringField, SubmitField, SelectField, SelectMultipleField
 from wtforms.validators import DataRequired
 
 
@@ -8,9 +8,27 @@ class UserForm(FlaskForm):
     submit = SubmitField('Submit')
 
 
-class EventForm(FlaskForm):
-    event_id = SelectField('Which event are you training for?')
+class PlanForm(FlaskForm):
+    event_id = SelectField('Which event are you training for?', coerce=int)
+    level = SelectField('What is your current ability level?',
+                        choices=[('beg', 'Beginner'),
+                                 ('int', 'Intermediate'),
+                                 ('adv', 'Advanced')
+                                 ],
+                        default='Beginner')
+    days = SelectMultipleField('On which days would you like to train?',
+                               choices=[(0, 'Monday'),
+                                        (1, 'Tuesday'),
+                                        (2, 'Wednesday'),
+                                        (3, 'Thursday'),
+                                        (4, 'Friday'),
+                                        (5, 'Saturday'),
+                                        (6, 'Sunday')],
+                               default=[1, 3, 5],
+                               coerce=int)
     submit = SubmitField('Submit')
+
+
 
 
 # class PlanForm(FlaskForm):
