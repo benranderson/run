@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, SelectField, SelectMultipleField
+from wtforms import StringField, SubmitField, SelectField, SelectMultipleField, DateField
 from wtforms.validators import DataRequired
 
 
@@ -11,9 +11,9 @@ class UserForm(FlaskForm):
 class PlanForm(FlaskForm):
     event_id = SelectField('Which event are you training for?', coerce=int)
     level = SelectField('What is your current ability level?',
-                        choices=[('beg', 'Beginner'),
-                                 ('int', 'Intermediate'),
-                                 ('adv', 'Advanced')
+                        choices=[('Beginner', 'Beginner'),
+                                 ('Intermediate', 'Intermediate'),
+                                 ('Advanced', 'Advanced')
                                  ],
                         default='Beginner')
     days = SelectMultipleField('On which days would you like to train?',
@@ -29,32 +29,39 @@ class PlanForm(FlaskForm):
     submit = SubmitField('Submit')
 
 
+class EventForm(FlaskForm):
+    name = StringField('Name')
+    distance = SelectField('Distance', choices=[('5k', '5k'),
+                                                ('10k', '10k'),
+                                                ('Half Marathon', 'Half Marathon'),
+                                                ('Marathon', 'Marathon'),
+                                                ])
+    date = DateField('Date')
 
+    # class PlanForm(FlaskForm):
+    #     event = SelectField('Which event are you training for?',
+    #                         default="Edinburgh Marathon Festival 5k")
 
-# class PlanForm(FlaskForm):
-#     event = SelectField('Which event are you training for?',
-#                         default="Edinburgh Marathon Festival 5k")
+    #     level = SelectField('What is your current ability level?',
+    #                         choices=LEVELS,
+    #                         default='Beginner')
 
-#     level = SelectField('What is your current ability level?',
-#                         choices=LEVELS,
-#                         default='Beginner')
+    #     days = SelectMultipleField('On which days would you like to train?',
+    #                                choices=DAYS,
+    #                                default=[1, 3, 5],
+    #                                coerce=int)
 
-#     days = SelectMultipleField('On which days would you like to train?',
-#                                choices=DAYS,
-#                                default=[1, 3, 5],
-#                                coerce=int)
+    #     submit = SubmitField('Submit')
 
-#     submit = SubmitField('Submit')
+    #     def __init__(self, date):
+    #         super(PlanForm, self).__init__()
+    #         # Show future events within 12 months
+    #         resource_path = os.path.join(basedir, 'events.json')
+    #         events = open_json(resource_path)
 
-#     def __init__(self, date):
-#         super(PlanForm, self).__init__()
-#         # Show future events within 12 months
-#         resource_path = os.path.join(basedir, 'events.json')
-#         events = open_json(resource_path)
-
-#         self.event.choices = [
-#             (event, "{0} ({1})".format(event,
-#                                        datetime.strptime(info["date"],
-#                                                          '%Y-%m-%d').date().strftime('%d %b %Y')))
-#             for (event, info) in events.items()
-#             if date < datetime.strptime(info["date"], '%Y-%m-%d').date() < (date + timedelta(weeks=4 * 12))]
+    #         self.event.choices = [
+    #             (event, "{0} ({1})".format(event,
+    #                                        datetime.strptime(info["date"],
+    #                                                          '%Y-%m-%d').date().strftime('%d %b %Y')))
+    #             for (event, info) in events.items()
+    #             if date < datetime.strptime(info["date"], '%Y-%m-%d').date() < (date + timedelta(weeks=4 * 12))]

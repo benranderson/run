@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Run - Schedule{% endblock %}
+
+{% block page_content %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script>
+$(function(){
+    $('#workoutModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var title = button.data('title');
+        var description = button.data('description');
+        var modal = $(this);
+        modal.find('.modal-title').text(title);
+        modal.find('.modal-body').text(description);
+    });
+});
+</script>
+<div class="jumbotron">
+    <h1>Training Plan <i class="fa fa-calendar"></i></h1>
+</div>
+<div>
+    <p><a href="{{ url_for('main.create') }}"><button type="button" class="btn btn-default">Back</button></a></p>
+    <p>
+        Hey 
+        {% if current_user.is_authenticated %}
+            {{ current_user.username }}!
+        {% else %}
+            Stranger!
+        {% endif %}
+    </p>
+    <p>Here is your bespoke <strong>{{ plan.level|lower }}</strong> plan for the <strong>{{ plan.event.name }}</strong> on <strong>{{ moment(plan.event.date).format('LL') }}</strong>.</p>
+</div>
+<!-- Workout Modal -->
+<div class="modal fade" id="workoutModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Title placeholder</h4>
+            </div>
+            <div>
+                <p class="modal-body">Body placeholder</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div>
+    <h4>Key</h4>
+    <p>The different kinds of training sessions are coloured as shown below.  Click for more detail.</p>
+    <button type="button" class="btn btn-easy col-xs-4 col-sm-4" data-toggle="modal" data-target="#workoutModal" data-title="Easy Run Workout" data-description="Run at an easy pace for a specified period of time.  Easy pace is very comfortable.  You should be able to maintain this pace for a long period of time.  You should be able to hold a conversation when running at an easy pace.">Easy Run</button>
+    <button type="button" class="btn btn-intervals col-xs-4 col-sm-4" data-toggle="modal" data-target="#workoutModal" data-title="Intervals Workout" data-description="Alternate running fast and easy.">Intervals</button>
+    <button type="button" class="btn btn-hillsprint col-xs-4 col-sm-4" data-toggle="modal" data-target="#workoutModal" data-title="Hillsprint Workout" data-description="Run fast uphill then turn and run easy or walk back down hill to your starting point">Hillsprint</button>
+    <br>
+    <br>
+    <br>
+</div>
+<div>
+    {% for calendar in calendars %}
+        {{ calendar | safe }}
+    {% endfor %}
+</div>
+{% endblock %}
+

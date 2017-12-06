@@ -1,43 +1,78 @@
+h1, h2, h3, h4 {
+  color: #212121;
+}
+
+p {
+  color: #757575;
+}
+
 .jumbotron {
-    /* font-family: 'Source Sans Pro', sans-serif; */
-    /* padding: 20 !important; */
-    color: #FFFFFF;
-    background-color: #FF5722;
-    text-align: center;
+  /* font-family: 'Source Sans Pro', sans-serif; */
+  /* padding: 20 !important; */
+  color: #FFFFFF;
+  background-color: #FF5722;
+  text-align: center;
 }
 
+/* Workout buttons */
 
-/* footer */
-
-footer {
-  margin-top: 45px;
-  padding-top: 5px;
-  border-top: 1px solid #eaeaea;
-  color: #999999;
+.btn-event {
+  background-color: #673AB7;
+  border-color: #673AB7;
+  color: #FFFFFF;
 }
 
-footer a {
-  color: #999999;
+.btn-easy {
+  background-color: #4CAF50;
+  border-color: #4CAF50;
+  color: #FFFFFF;
 }
 
-footer p {
-  float: right;
+.btn-intervals {
+  background-color: #F44336;
+  border-color: #F44336;
+  color: #FFFFFF;
 }
 
-footer ul {
-  list-style: none;
+.btn-hillsprint {
+  background-color: #FFC107;
+  border-color: #FFC107;
+  color: #212121;
 }
 
-footer ul li {
-  float: left;
+.btn-tempo {
+  background-color: #2196F3;
+  border-color: #2196F3;
+  color: #FFFFFF;
 }
 
-footer .company {
-  float: left;
+/* Calendar */
+
+ table.month {
+  table-layout: fixed;
+ }
+
+table.month td {
+  height: 4em;
+  text-align: center;
 }
 
-footer .footer-nav {
-  float: right;
-  margin-right: 25px;
-  list-style: none;
+table.month th {
+  text-align: center;
+  color: #212121;
+}
+
+table.month td {
+  width: 14.285%;
+}
+
+table.month th.month{
+  text-align: center;
+  color: #212121;
+  background-color: #eeeeec;
+  font-size: 150%;
+}
+
+table.month td.today {
+  background-color: #F8F8F8;
 }
