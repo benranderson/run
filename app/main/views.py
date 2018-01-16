@@ -1,7 +1,9 @@
 from flask import render_template, session, redirect, url_for, current_app, \
-    flash
+    flash, send_file
 from flask_login import current_user
 from datetime import date, timedelta
+from ics import Calendar
+from ics import Event as icsEvent
 from .. import db
 from ..models import Event, Plan, Workout
 from ..email import send_email
@@ -58,6 +60,37 @@ def plan(id):
             calendar_workout_date = workout_date
 
     return render_template('plan.html', plan=plan, calendars=calendars)
+
+
+@main.route('/workout/<int:id>', methods=['GET', 'POST'])
+def workout(id):
+    workout = Workout.query.get_or_404(id)
+    return render_template('workout.html', workout=workout)
+
+
+@main.route('/plan/<int:id>/ical', methods=['GET', 'POST'])
+def ical(id):
+    plan = Plan.query.get_or_404(id)
+    c = Calendar()
+    for workout in plan.workouts:
+        e = icsEvent()
+        e.name = workout.category
+        e.begin = str(workout.date)
+        e.description = str(workout)
+        print(e.description)
+        c.events.append(e)
+
+    print(c.events)
+
+    with open('app/workout-cal.ics', 'w') as f:
+        f.writelines(c)
+
+    try:
+        return send_file('workout-cal.ics', attachment_filename='workout-cal.ics')
+    except Exception as e:
+        return str(e)
+
+    return redirect(url_for('.plan', id=id))
 
 
 def is_next_month(first_date, second_date):

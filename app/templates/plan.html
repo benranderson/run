@@ -58,6 +58,7 @@ $(function(){
     <br>
 </div>
 <div>
+    <p><a href="{{ url_for('main.ical', id=plan.id) }}"><button type="button" class="btn btn-default">Export to iCal</button></a></p>
     {% for calendar in calendars %}
         {{ calendar | safe }}
     {% endfor %}

@@ -38,13 +38,15 @@ class WorkoutCalendar(HTMLCalendar):
         body = []
         # exercises_html = "<br />".join(workout.exercises.split("\n"))
         body.append(repr(day))
-        body.append('<button type="button" class="btn btn-{0} btn-block"'
-                    'data-toggle="modal" data-target="#workoutModal"'
-                    'data-title="{1} Workout on {2}" data-description="{3}">'
-                    '{1}</button>'.format(workout.category,
-                                          workout.category.capitalize(),
-                                          formatted_date,
-                                          description))
+        body.append(
+            '<a href="/workout/{0}"><button type="button" class="btn btn-{1} btn-block">{2}</button></a>'.format(workout.id, workout.category, workout.category.capitalize()))
+        # body.append('<button type="button" class="btn btn-{0} btn-block"'
+        #             'data-toggle="modal" data-target="#workoutModal"'
+        #             'data-title="{1} Workout on {2}" data-description="{3}">'
+        #             '{1}</button>'.format(workout.category,
+        #                                   workout.category.capitalize(),
+        #                                   formatted_date,
+        #                                   description))
         return self.day_cell(cssclass, '{0}'.format(''.join(body)))
 
     def formatmonth(self, year, month, withyear=False):

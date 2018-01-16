@@ -8,6 +8,9 @@
 # Database
 *.sqlite
 
+# Calendar files
+*.ics
+
 *.py[cod]
 
 # C extensions

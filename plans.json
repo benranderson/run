@@ -1,0 +1,208 @@
+{
+    "Beginner": [
+        [
+            {
+                "category": "easy",
+                "warmup": 0,
+                "warmdown": 0,
+                "workoutset_settings": [
+                    {
+                        "reps_start": 1,
+                        "reps_step": 0,
+                        "reps_step_interval": 0,
+                        "reps_max": 1,
+                        "exercise_settings": [
+                            {
+                                "description": "easy",
+                                "duration_start": 25,
+                                "duration_step": 5,
+                                "duration_step_interval": 3,
+                                "duration_max": 35
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        [
+            {
+                "category": "intervals",
+                "warmup": 10,
+                "warmdown": 10,
+                "workoutset_settings": [
+                    {
+                        "reps_start": 5,
+                        "reps_step": 1,
+                        "reps_step_interval": 1,
+                        "reps_max": 8,
+                        "exercise_settings": [
+                            {
+                                "description": "fast",
+                                "duration_start": 0.5,
+                                "duration_step": 0.25,
+                                "duration_step_interval": 1,
+                                "duration_max": 1
+                            },
+                            {
+                                "description": "easy",
+                                "duration_start": 1,
+                                "duration_step": 0,
+                                "duration_step_interval": 0,
+                                "duration_max": 1
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "category": "hillsprint",
+                "warmup": 12,
+                "warmdown": 12,
+                "workoutset_settings": [
+                    {
+                        "reps_start": 6,
+                        "reps_step": 2,
+                        "reps_step_interval": 3,
+                        "reps_max": 10,
+                        "exercise_settings": [
+                            {
+                                "description": "hillsprint",
+                                "duration_start": 0.25,
+                                "duration_step": 0,
+                                "duration_step_interval": 0,
+                                "duration_max": 0.25
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        [
+            {
+                "category": "easy",
+                "warmup": 0,
+                "warmdown": 0,
+                "workoutset_settings": [
+                    {
+                        "reps_start": 1,
+                        "reps_step": 0,
+                        "reps_step_interval": 0,
+                        "reps_max": 1,
+                        "exercise_settings": [
+                            {
+                                "description": "easy",
+                                "duration_start": 30,
+                                "duration_step": 5,
+                                "duration_step_interval": 3,
+                                "duration_max": 35
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    ],
+    "Intermediate": [
+        [
+            {
+                "category": "easy",
+                "warmup": 0,
+                "warmdown": 0,
+                "workoutset_settings": [
+                    {
+                        "reps_start": 1,
+                        "reps_step": 0,
+                        "reps_step_interval": 0,
+                        "reps_max": 1,
+                        "exercise_settings": [
+                            {
+                                "description": "easy",
+                                "duration_start": 25,
+                                "duration_step": 5,
+                                "duration_step_interval": 3,
+                                "duration_max": 35
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        [
+            {
+                "category": "intervals",
+                "warmup": 10,
+                "warmdown": 10,
+                "workoutset_settings": [
+                    {
+                        "reps_start": 5,
+                        "reps_step": 1,
+                        "reps_step_interval": 1,
+                        "reps_max": 8,
+                        "exercise_settings": [
+                            {
+                                "description": "fast",
+                                "duration_start": 0.5,
+                                "duration_step": 0.25,
+                                "duration_step_interval": 1,
+                                "duration_max": 1
+                            },
+                            {
+                                "description": "easy",
+                                "duration_start": 1,
+                                "duration_step": 0,
+                                "duration_step_interval": 0,
+                                "duration_max": 1
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "category": "hillsprint",
+                "warmup": 12,
+                "warmdown": 12,
+                "workoutset_settings": [
+                    {
+                        "reps_start": 6,
+                        "reps_step": 2,
+                        "reps_step_interval": 3,
+                        "reps_max": 10,
+                        "exercise_settings": [
+                            {
+                                "description": "hillsprint",
+                                "duration_start": 0.25,
+                                "duration_step": 0,
+                                "duration_step_interval": 0,
+                                "duration_max": 0.25
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        [
+            {
+                "category": "easy",
+                "warmup": 0,
+                "warmdown": 0,
+                "workoutset_settings": [
+                    {
+                        "reps_start": 1,
+                        "reps_step": 0,
+                        "reps_step_interval": 0,
+                        "reps_max": 1,
+                        "exercise_settings": [
+                            {
+                                "description": "easy",
+                                "duration_start": 30,
+                                "duration_step": 5,
+                                "duration_step_interval": 3,
+                                "duration_max": 35
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    ]
+}

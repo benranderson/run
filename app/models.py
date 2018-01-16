@@ -9,6 +9,8 @@ from . import db, admin, login_manager
 from .exceptions import ValidationError
 from .builder import rest_week
 
+from pprint import pprint
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -101,21 +103,92 @@ class Workout(db.Model):
     def __repr__(self):
         return f'<{self.__class__.__name__} {self.date}>'
 
+    def __str__(self):
+        description = f'{self.category.title()} Workout\n'
+        for workoutset in self.workoutsets:
+            description += f'{str(workoutset.reps)}x [ '
+            for exercise in workoutset.exercises:
+                description += f'{exercise.description} ({exercise.duration:.1f}mins) '
+            description += ']\n'
+        return description
 
-RepsSetting = namedtuple('RepsSetting', [
-    'start',
-    'step',
-    'step_interval',
-    'max',
-])
 
-ExerciseSetting = namedtuple('ExerciseSetting', [
-    'description',
-    'start',
-    'step',
-    'step_interval',
-    'max',
-])
+class PlanSetting(db.Model):
+
+    __tablename__ = 'plan_settings'
+
+    id = db.Column(db.Integer, primary_key=True)
+    distance = db.Column(db.String(64))
+    level = db.Column(db.String(64))
+    plan_days = db.relationship('PlanDay', backref='plan_setting',
+                                lazy='dynamic', cascade='all, delete-orphan')
+
+    def __repr__(self):
+        return f'<{self.__class__.__name__} {self.distance} - {self.level}>'
+
+
+class PlanDay(db.Model):
+
+    __tablename__ = 'plan_days'
+
+    id = db.Column(db.Integer, primary_key=True)
+    progressions = db.relationship('Progression', backref='plan_day',
+                                   lazy='dynamic', cascade='all, delete-orphan')
+    plan_setting_id = db.Column(db.Integer, db.ForeignKey('plan_settings.id'))
+
+
+class Progression(db.Model):
+
+    __tablename__ = 'progressions'
+
+    id = db.Column(db.Integer, primary_key=True)
+    day = db.Column(db.Integer)
+    category = db.Column(db.String(64))
+    warmup = db.Column(db.Numeric)
+    warmdown = db.Column(db.Numeric)
+    workoutset_settings = db.relationship('WorkoutSetSetting', backref='progression',
+                                          lazy='dynamic', cascade='all, delete-orphan')
+    plan_day_id = db.Column(db.Integer, db.ForeignKey('plan_days.id'))
+
+    def __repr__(self):
+        return f'<{self.__class__.__name__} {self.category}>'
+
+    def number_of_workouts(self):
+        return len(self.workoutset_settings)
+
+
+class WorkoutSetSetting(db.Model):
+
+    __tablename__ = 'workoutset_settings'
+
+    id = db.Column(db.Integer, primary_key=True)
+    reps_start = db.Column(db.Integer)
+    reps_step = db.Column(db.Integer)
+    reps_step_interval = db.Column(db.Integer)
+    reps_max = db.Column(db.Integer)
+    exercise_settings = db.relationship('ExerciseSetting', backref='workoutset_setting',
+                                        lazy='dynamic', cascade='all, delete-orphan')
+    progression_id = db.Column(db.Integer, db.ForeignKey('progressions.id'))
+
+    def __repr__(self):
+        return f'<{self.__class__.__name__} {self.id}>'
+
+
+class ExerciseSetting(db.Model):
+
+    __tablename__ = 'exercise_settings'
+
+    id = db.Column(db.Integer, primary_key=True)
+    description = db.Column(db.String(64))
+    duration_start = db.Column(db.Numeric)
+    duration_step = db.Column(db.Numeric)
+    duration_step_interval = db.Column(db.Numeric)
+    duration_max = db.Column(db.Numeric)
+    workoutset_setting_id = db.Column(
+        db.Integer, db.ForeignKey('workoutset_settings.id'))
+
+    def __repr__(self):
+        return f'<{self.__class__.__name__} {self.description}>'
 
 
 class Plan(db.Model):
@@ -130,103 +203,6 @@ class Plan(db.Model):
         cascade='all, delete-orphan')
     event_id = db.Column(db.Integer, db.ForeignKey('events.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-
-    fivek_plans = {
-        'Beginner': [
-            [
-                {'category': 'easy',
-                 'warmup': 0,
-                 'warmdown': 0,
-                 'reps': RepsSetting(1, 0, 0, 1),
-                 'exercises': [ExerciseSetting('easy', 25, 5, 3, 35)]}
-            ],
-            [
-                {'category': 'intervals',
-                 'warmup': 10,
-                 'warmdown': 10,
-                 'reps': RepsSetting(6, 1, 2, 8),
-                 'exercises': [ExerciseSetting('intervals', 1, 0.25, 2, 2)]},
-                {'category': 'hillsprint',
-                 'warmup': 0,
-                 'warmdown': 0,
-                 'reps': RepsSetting(5, 0, 0, 1),
-                 'exercises': [ExerciseSetting('hillsprint', 25, 5, 3, 100)]}
-            ],
-            [
-                {'category': 'easy',
-                 'warmup': 10,
-                 'warmdown': 10,
-                 'reps': RepsSetting(5, 0, 0, 1),
-                 'exercises': [ExerciseSetting('fast', 0.5, 0.25, 2, 2),
-                               ExerciseSetting('easy', 1, 0, 0, 1)]}
-            ]
-        ],
-        'Intermediate': [
-            [
-                {'category': 'easy',
-                 'warmup': 0,
-                 'warmdown': 0,
-                 'reps': RepsSetting(1, 0, 0, 1),
-                 'exercises': [ExerciseSetting('easy', 25, 5, 3, 100)]}
-            ],
-            [
-                {'category': 'hillsprint',
-                 'warmup': 12,
-                 'warmdown': 12,
-                 'reps': RepsSetting(6, 1, 2, 8),
-                 'exercises': [ExerciseSetting('hill', 1, 0.25, 2, 2)]},
-                {'category': 'easy',
-                 'warmup': 0,
-                 'warmdown': 0,
-                 'reps': RepsSetting(1, 0, 0, 1),
-                 'exercises': [ExerciseSetting('easy', 25, 5, 3, 100)]}
-            ],
-            [
-                {'category': 'easy',
-                 'warmup': 10,
-                 'warmdown': 10,
-                 'reps': RepsSetting(5, 0, 0, 1),
-                 'exercises': [ExerciseSetting('fast', 0.5, 0.25, 2, 2),
-                               ExerciseSetting('easy', 1, 0, 0, 1)]}
-            ]
-        ],
-        'Advanced': [
-            [
-                {'category': 'easy',
-                 'warmup': 0,
-                 'warmdown': 0,
-                 'reps': RepsSetting(1, 0, 0, 1),
-                 'exercises': [ExerciseSetting('easy', 25, 5, 3, 100)]}
-            ],
-            [
-                {'category': 'hillsprint',
-                 'warmup': 12,
-                 'warmdown': 12,
-                 'reps': RepsSetting(6, 1, 2, 8),
-                 'exercises': [ExerciseSetting('hill', 1, 0.25, 2, 2)]},
-                {'category': 'easy',
-                 'warmup': 0,
-                 'warmdown': 0,
-                 'reps': RepsSetting(1, 0, 0, 1),
-                 'exercises': [ExerciseSetting('easy', 25, 5, 3, 100)]}
-            ],
-            [
-                {'category': 'easy',
-                 'warmup': 10,
-                 'warmdown': 10,
-                 'reps': RepsSetting(5, 0, 0, 1),
-                 'exercises': [ExerciseSetting('fast', 0.5, 0.25, 2, 2),
-                               ExerciseSetting('easy', 1, 0, 0, 1)]}
-            ]
-        ]
-    }
-
-    plan_settings = {
-        '5k': fivek_plans,
-        '10k': fivek_plans,
-        'half': fivek_plans,
-        'full': fivek_plans
-    }
 
     def __repr__(self):
         return f'<{self.__class__.__name__} {self.level}>'
@@ -251,13 +227,21 @@ class Plan(db.Model):
         '''
         Creates schedule based on ability level and training days.
         '''
-
-        plan = Plan.plan_settings[self.event.distance]
-        settings = plan[self.level]
+        plan_setting = PlanSetting.query.filter_by(level=self.level).first()
 
         if days is not None:
-            for day, plan in zip(days, settings):
-                for wk, progression in zip(range(self.length), cycle(plan)):
+            for day, plan_day in zip(days, plan_setting.plan_days):
+
+                progress_tally = {}
+                for progression in plan_day.progressions:
+                    progress_tally[progression] = {}
+                    for workoutset_setting in progression.workoutset_settings:
+                        progress_tally[progression][workoutset_setting] = {}
+                        progress_tally[progression][workoutset_setting]['reps'] = 0
+                        for es in workoutset_setting.exercise_settings:
+                            progress_tally[progression][workoutset_setting][es] = 0
+
+                for wk, progression in zip(range(self.length), cycle(plan_day.progressions)):
 
                     # determine date of workout
                     dt = self.start_date - \
@@ -265,12 +249,12 @@ class Plan(db.Model):
                         timedelta(days=day) + timedelta(weeks=wk)
 
                     w = Workout(plan=self, date=dt,
-                                category=progression['category'])
+                                category=progression.category)
 
                     # warmup set
-                    if progression['warmup'] > 0:
+                    if progression.warmup > 0:
                         e = Exercise(description='easy',
-                                     duration=progression['warmup'])
+                                     duration=progression.warmup)
                         warmup = WorkoutSet(workout=w, reps=1, exercises=[e])
 
                     # work set, first determine if rest week
@@ -279,24 +263,33 @@ class Plan(db.Model):
                     else:
                         multiple = wk
 
-                    reps = min(progression['reps'].start +
-                               progression['reps'].step * multiple,
-                               progression['reps'].max)
+                    for workoutset_setting in progression.workoutset_settings:
 
-                    exercises = []
-                    for es in progression['exercises']:
-                        description = es.description
-                        duration = min(es.start + es.step * multiple, es.max)
-                        e = Exercise(description=description,
-                                     duration=duration)
-                        exercises.append(e)
+                        # check if reps progress week
+                        if workoutset_setting.reps_step_interval > 0 and (wk + 1) % workoutset_setting.reps_step_interval == 0:
+                            progress_tally[progression][workoutset_setting]['reps'] += workoutset_setting.reps_step
 
-                    ws = WorkoutSet(workout=w, reps=reps, exercises=exercises)
+                        reps = min(workoutset_setting.reps_start +
+                                   progress_tally[progression][workoutset_setting]['reps'],
+                                   workoutset_setting.reps_max)
+
+                        ws = WorkoutSet(workout=w, reps=reps)
+
+                        for es in workoutset_setting.exercise_settings:
+                            description = es.description
+                            # check if duration progress week
+                            if es.duration_step_interval > 0 and (wk + 1) % es.duration_step_interval == 0:
+                                progress_tally[progression][workoutset_setting][es] += es.duration_step
+                            duration = min(es.duration_start +
+                                           progress_tally[progression][workoutset_setting][es],
+                                           es.duration_max)
+                            e = Exercise(workoutset=ws, description=description,
+                                         duration=duration)
 
                     # warmdown set
-                    if progression['warmdown'] > 0:
+                    if progression.warmdown > 0:
                         e = Exercise(description='easy',
-                                     duration=progression['warmdown'])
+                                     duration=progression.warmdown)
                         warmdown = WorkoutSet(workout=w, reps=1, exercises=[e])
 
         else:
@@ -335,3 +328,8 @@ admin.add_view(ModelView(User, db.session))
 admin.add_view(ModelView(Event, db.session))
 admin.add_view(ModelView(Plan, db.session))
 admin.add_view(ModelView(Workout, db.session))
+admin.add_view(ModelView(PlanSetting, db.session))
+admin.add_view(ModelView(PlanDay, db.session))
+admin.add_view(ModelView(Progression, db.session))
+admin.add_view(ModelView(WorkoutSetSetting, db.session))
+admin.add_view(ModelView(ExerciseSetting, db.session))
