@@ -1,28 +1,36 @@
-{% extends "base.html" %}
-{% import "bootstrap/wtf.html" as wtf %}
-
-{% block title %}Workout - {{ workout.category|capitalize }}{% endblock %}
-
-{% block page_content %}
+{% extends "base.html" %} {% import "bootstrap/wtf.html" as wtf %} {% block title %}Workout - {{ workout.category|capitalize
+}}{% endblock %} {% block page_content %}
 <div>
-    <p><a href="{{ url_for('main.plan', id=workout.plan.id) }}"><button type="button" class="btn btn-default">Back</button></a></p>
+    <p>
+        <a href="{{ url_for('main.plan', id=workout.plan.id) }}">
+            <button type="button" class="btn btn-default">Back</button>
+        </a>
+    </p>
     <h1>{{ workout.category|capitalize }}</h1>
     <button type="button" class="btn btn-{% if workout.category == 'easy' %}easy{% elif workout.category == 'intervals' %}intervals{% else %}hillsprint{% endif %} btn-block">{{ moment(workout.date ).format('LL') }}</button>
     <h2>Workout</h2>
+    <p>
+        <strong>Total Duration: </strong>{{ '{:,.1f}mins'.format(workout.duration) }}
+    </p>
+    <p>Rest Week: {{ workout.rest }}</p>
     <table class="table table-hover">
-        <thead><tr>
-            <th>Reps</th>
-            <th>Exercise</th>
-        </tr></thead>    
-        {% for workoutset in workout.workoutsets %}
+        <thead>
             <tr>
-                <td>{{ workoutset.reps }}</td>
-                <td>
-                    {% for exercise in workoutset.exercises %}
-                        <p>{{ exercise.description|capitalize }} ({{ '{:,.1f}mins'.format(exercise.duration) }})</p>
-                    {% endfor %}
-                </td>
+                <th>Set</th>
+                <th>Reps</th>
+                <th>Exercise</th>
             </tr>
+        </thead>
+        {% for workoutset in workout.workoutsets %}
+        <tr>
+            <td>{{loop.index}}</td>
+            <td>{{ workoutset.reps }}</td>
+            <td>
+                {% for exercise in workoutset.exercises %}
+                <p>{{ exercise.description|capitalize }} ({{ '{:,.1f}mins'.format(exercise.duration) }})</p>
+                {% endfor %}
+            </td>
+        </tr>
         {% endfor %}
     </table>
 </div>

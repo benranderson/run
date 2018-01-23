@@ -4,8 +4,7 @@ import click
 from datetime import datetime
 from flask_migrate import Migrate
 from app import create_app, db
-from app.models import User, Event, Exercise, ExerciseSetting, \
-    WorkoutSetSetting, Progression, PlanDay, PlanSetting
+from app.models import User, Event, Exercise
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 migrate = Migrate(app, db)
