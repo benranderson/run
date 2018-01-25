@@ -14,6 +14,7 @@ class Config:
     RUN_MAIL_SENDER = 'Run Admin <ben.m.randerson@gmail.com>'
     RUN_ADMIN = os.environ.get('RUN_ADMIN')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    LOG_TO_STDOUT = os.environ.get('LOG_TO_STDOUT')
 
     @staticmethod
     def init_app(app):

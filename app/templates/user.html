@@ -13,20 +13,16 @@ page_content %}
         });
     });
 </script>
-<div class="jumbotron">
-    <h1>Training Plan
-        <i class="fa fa-calendar"></i>
-    </h1>
-</div>
 <div>
-    <p>
+    <h2>
         Hey {{ user.username }}!
-    </p>
+    </h2>
     <p>Here is your bespoke
         <strong>{{ plan.level|lower }}</strong> plan for the
         <strong>{{ plan.event.name }}</strong> on
         <strong>{{ moment(plan.event.date).format('LL') }}</strong>.
     </p>
+    <br>
 </div>
 <!-- Workout Modal -->
 <div class="modal fade" id="workoutModal" tabindex="-1" role="dialog" aria-hidden="true">

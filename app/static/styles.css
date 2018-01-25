@@ -17,8 +17,26 @@ h6,
   color: #757575;
 }
 
+.navbar-default {
+  background-color: #FF5722;
+  border-color: #FF5722;
+}
+
+.navbar-default .navbar-nav > li > a {
+  color: #FFF;
+}
+
 .navbar-brand {
+  color: #FFF;
   font-weight: 700;
+}
+
+.navbar-default .navbar-toggle .icon-bar {
+  background-color: #fff;
+}
+
+.navbar-default .navbar-toggle:focus, .navbar-default .navbar-toggle:hover {
+  background-color: rgba(187, 66, 29, 0.527);
 }
 
 .jumbotron {
