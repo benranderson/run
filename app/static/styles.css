@@ -29,6 +29,7 @@ h6,
 .navbar-brand {
   color: #FFF;
   font-weight: 700;
+  font-size: 200%;
 }
 
 .navbar-default .navbar-toggle .icon-bar {
