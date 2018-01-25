@@ -13,18 +13,6 @@ page_content %}
         });
     });
 </script>
-<div>
-    <h2>
-        Hey {{ user.username }}!
-    </h2>
-    {% if calendars %}
-    <p>Here is your bespoke
-        <strong>{{ plan.level|lower }}</strong> plan for the
-        <strong>{{ plan.event.name }}</strong> on
-        <strong>{{ moment(plan.event.date).format('LL') }}</strong>.
-    </p>
-    <br>
-</div>
 <!-- Workout Modal -->
 <div class="modal fade" id="workoutModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
@@ -43,6 +31,18 @@ page_content %}
 </div>
 <!-- -->
 <div>
+    <h2>
+        Hey {{ user.username }}!
+    </h2>
+</div>
+{% if calendars %}
+<div>
+    <p>Here is your bespoke
+        <strong>{{ plan.level|lower }}</strong> plan for the
+        <strong>{{ plan.event.name }}</strong> on
+        <strong>{{ moment(plan.event.date).format('LL') }}</strong>.
+    </p>
+    <br>
     <p>The different kinds of training sessions are coloured as shown below. Click for more detail.</p>
     <button type="button" class="btn btn-easy col-xs-4 col-sm-4" data-toggle="modal" data-target="#workoutModal" data-title="Easy Run Workout"
         data-description="Run at an easy pace for a specified period of time.  Easy pace is very comfortable.  You should be able to maintain this pace for a long period of time.  You should be able to hold a conversation when running at an easy pace.">Easy Run</button>
@@ -68,7 +68,11 @@ page_content %}
     </div>
 </div>
 {% else %}
-<a href="{{ url_for('main.create') }}">
-    <button type="button" class="btn btn-primary">Create new plan</button>
-</a>
+<div class="gif">
+    <br>
+    <a href="{{ url_for('main.create') }}">
+        <button type="button" class="btn btn-primary">Create your plan</button>
+    </a>
+    <img src="https://media.giphy.com/media/OuYPw9FOh1cWY/giphy.gif" alt="Running Man">
+</div>
 {% endif %} {% endblock %}
