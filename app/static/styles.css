@@ -124,12 +124,14 @@ h6,
 .events {
   list-style: none;
   padding-top: 20px;
+  padding-left: 0;
 }
 
 .events > li {
   position: relative;
   margin-bottom: 30px;
   color: #757575;
+  margin-left: none;
 }
 
   .events > li .date {
