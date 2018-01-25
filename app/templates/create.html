@@ -1,30 +1,20 @@
-{% extends "base.html" %}
-{% import "bootstrap/wtf.html" as wtf %}
-{% import "_macros.html" as macros %}
-
-{% block title %}Run - Create{% endblock %}
-
-{% block page_content %}
-    <div class="jumbotron">
-        <h1>Run! 🏃‍♀️🏃‍♂️</h1>
-    </div>
-    <div class="container">
-        <h2>
-            Hello,
-            {% if current_user.is_authenticated %}
-                {{ current_user.username }}!
-            {% else %}
-                Stranger!
-            {% endif %}
-        </h2>
-        <form method="post" role="form">
-            {{ form.hidden_tag() }}
-            <p>{{ form.event_id.label }}</p>
-            <p>{{ form.event_id(class="form-control") }}</p>
-            <p>{{ form.level.label }}</p>
-            <p>{{ form.level(class="form-control") }}</p>
-            <p>{{ macros.render_field(form.days, 7) }}</p>
-            <p>{{ form.submit(class="btn btn-primary btn-block") }}</p>
-        </form>
-    </div>
+{% extends "base.html" %} {% import "bootstrap/wtf.html" as wtf %} {% import "_macros.html" as macros %} {% block title %}Run
+- Create{% endblock %} {% block page_content %}
+<div class="jumbotron">
+    <h1>Run! 🏃‍♀️🏃‍♂️</h1>
+</div>
+<div class="container">
+    <h2>
+        Hello, {% if current_user.is_authenticated %} {{ current_user.username }}! {% else %} Stranger! {% endif %}
+    </h2>
+    <form method="post" role="form">
+        {{ form.hidden_tag() }}
+        <p>{{ form.event_id.label }}</p>
+        <p>{{ form.event_id(class="form-control") }}</p>
+        <p>{{ form.level.label }}</p>
+        <p>{{ form.level(class="form-control") }}</p>
+        <p>{{ macros.render_field(form.days, 7) }}</p>
+        <p>{{ form.submit(class="btn btn-primary btn-block") }}</p>
+    </form>
+</div>
 {% endblock %}

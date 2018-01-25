@@ -1,9 +1,24 @@
-h1, h2, h3, h4 {
-  color: #212121;
+/* Bootstrap Overrides */
+
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6 {
+  font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #757575;
 }
 
-p {
-  color: #757575;
+.navbar-brand {
+  font-weight: 700;
 }
 
 .jumbotron {
@@ -46,33 +61,82 @@ p {
   color: #FFFFFF;
 }
 
-/* Calendar */
+/* Workout Calendar */
 
- table.month {
-  table-layout: fixed;
- }
-
-table.month td {
-  height: 4em;
-  text-align: center;
+.workout-calendar {
+  padding-top: 20px;
 }
 
-table.month th {
-  text-align: center;
-  color: #212121;
+  .workout-calendar > table.month {
+    table-layout: fixed;
+  }
+
+    .workout-calendar > table.month td, th {
+      text-align: center;
+    }
+
+    .workout-calendar > table.month th {
+      color: #212121;
+      background-color: #eeeeec;
+    }
+
+    .workout-calendar > table.month td {
+      height: 4em;
+    }
+
+    .workout-calendar > table.month th.month {
+      font-size: 150%;
+    }
+
+    .workout-calendar > table.month td.today {
+      background-color: #F8F8F8;
+    }
+
+/* Page-level styles */
+
+.events {
+  list-style: none;
+  padding-top: 20px;
 }
 
-table.month td {
-  width: 14.285%;
+.events > li {
+  position: relative;
+  margin-bottom: 30px;
+  color: #757575;
 }
 
-table.month th.month{
-  text-align: center;
-  color: #212121;
-  background-color: #eeeeec;
-  font-size: 150%;
-}
+  .events > li .date {
+    background: red;
+    color: white;
+    text-align: center;
+    width: 60px;
+    border-radius: 8px;
+  }
 
-table.month td.today {
-  background-color: #F8F8F8;
+    .events > li .month {
+      text-transform: uppercase;
+      font-size: 14px;
+      font-weight: bold;
+      padding: 2px 6px;
+    }
+
+    .events > li .day {
+      background: #f7f7f7;
+      color: #333;
+      font-size: 20px;
+      padding: 6px 12px;
+    }
+
+.events > li .details {
+  position: absolute;
+  top: 0;
+  left: 70px;
 }
+  .events > li .details .name {
+      font-weight: bold;
+      display: block;
+  }
+  .events > li .details .distance {
+      font-size: 15px;
+      text-transform: capitalize;
+  }

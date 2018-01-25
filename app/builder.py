@@ -27,7 +27,10 @@ def reps_or_duration(plan_length, plan_week, workout_week, start, step, maximum,
                      interval):
     # convert boolean returned from function to 1 or 0
     rest = int(rest_week(plan_week, plan_length))
-    result = start + (int(workout_week / interval) - rest) * step
+    if interval > 0:
+        result = start + (int(workout_week / interval) - rest) * step
+    else:
+        result = start
     return min(result, maximum - rest * step)
 
 

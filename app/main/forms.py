@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, SelectField, SelectMultipleField, DateField
+from wtforms import StringField, SubmitField, SelectField, SelectMultipleField, \
+    DateField, BooleanField, IntegerField, DecimalField, FieldList, FormField
 from wtforms.validators import DataRequired
 
 
@@ -30,38 +31,37 @@ class PlanForm(FlaskForm):
 
 
 class EventForm(FlaskForm):
-    name = StringField('Name')
-    distance = SelectField('Distance', choices=[('5k', '5k'),
-                                                ('10k', '10k'),
-                                                ('Half Marathon', 'Half Marathon'),
-                                                ('Marathon', 'Marathon'),
-                                                ])
-    date = DateField('Date')
+    name = StringField('Name', validators=[DataRequired()])
+    distance = SelectField('Distance',
+                           choices=[('5k', '5k'),
+                                    ('10k', '10k'),
+                                    ('Half Marathon', 'Half Marathon'),
+                                    ('Marathon', 'Marathon'),
+                                    ])
+    date = DateField('Date', validators=[DataRequired()])
+    submit = SubmitField('Submit')
 
-    # class PlanForm(FlaskForm):
-    #     event = SelectField('Which event are you training for?',
-    #                         default="Edinburgh Marathon Festival 5k")
 
-    #     level = SelectField('What is your current ability level?',
-    #                         choices=LEVELS,
-    #                         default='Beginner')
+class ExcerciseForm(FlaskForm):
+    description = StringField('Exercise description',
+                              validators=[DataRequired()])
+    duration = DecimalField('Duration', validators=[DataRequired()])
 
-    #     days = SelectMultipleField('On which days would you like to train?',
-    #                                choices=DAYS,
-    #                                default=[1, 3, 5],
-    #                                coerce=int)
 
-    #     submit = SubmitField('Submit')
+class WorkoutsetForm(FlaskForm):
+    reps = IntegerField('Reps', validators=[DataRequired()])
+    exercises = FieldList(FormField(ExcerciseForm), min_entries=2)
 
-    #     def __init__(self, date):
-    #         super(PlanForm, self).__init__()
-    #         # Show future events within 12 months
-    #         resource_path = os.path.join(basedir, 'events.json')
-    #         events = open_json(resource_path)
 
-    #         self.event.choices = [
-    #             (event, "{0} ({1})".format(event,
-    #                                        datetime.strptime(info["date"],
-    #                                                          '%Y-%m-%d').date().strftime('%d %b %Y')))
-    #             for (event, info) in events.items()
-    #             if date < datetime.strptime(info["date"], '%Y-%m-%d').date() < (date + timedelta(weeks=4 * 12))]
+class WorkoutForm(FlaskForm):
+    date = DateField('Date', validators=[DataRequired()])
+    category = SelectField('Category',
+                           choices=[('easy', 'Run Easy'),
+                                    ('intervals', 'Intervals'),
+                                    ('hillsprints', 'Hillsprints'),
+                                    ('crosstrain', 'Cross Train'),
+                                    ],
+                           validators=[DataRequired()])
+    rest = BooleanField('Rest')
+    workoutsets = FieldList(FormField(WorkoutsetForm), min_entries=2)
+    submit = SubmitField('Submit')

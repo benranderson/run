@@ -1,23 +1,47 @@
 from flask import render_template, session, redirect, url_for, current_app, \
     flash, send_file
-from flask_login import current_user
+from flask_login import current_user, login_required
 from datetime import date, timedelta
 from ics import Calendar
 from ics import Event as icsEvent
 from .. import db
-from ..models import Event, Plan, Workout
+from ..models import User, Event, Plan, Workout
 from ..email import send_email
 from . import main
-from .forms import PlanForm
+from .forms import PlanForm, WorkoutForm
 from .calendar import WorkoutCalendar
 
 
 @main.route('/', methods=['GET', 'POST'])
 def index():
-    return render_template('index.html')
+    events = Event.query.all()
+    return render_template('index.html', events=events)
+
+
+@main.route('/user/<username>', methods=['GET', 'POST'])
+@login_required
+def user(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    plan = Plan.query.filter_by(user=user).first_or_404()
+
+    workouts = {workout.date: workout for workout in plan.workouts}
+
+    calendars = []
+
+    for i, workout_date in enumerate(workouts):
+        if i == 0:
+            calendar_workout_date = workout_date
+        if i == 0 or is_next_month(calendar_workout_date, workout_date):
+            calendars.append(WorkoutCalendar(
+                workouts).formatmonth(workout_date.year, workout_date.month))
+            calendar_workout_date = workout_date
+
+    return render_template('user.html', user=user, plan=plan,
+                           calendars=calendars)
 
 
 @main.route('/create', methods=['GET', 'POST'])
+@login_required
 def create():
     form = PlanForm()
     form.event_id.choices = [(e.id, e.name)
@@ -35,34 +59,12 @@ def create():
         plan.create(days)
         db.session.commit()
         flash('Plan created.')
-        return redirect(url_for('.plan', id=plan.id))
+        return redirect(url_for('.user', username=current_user.username))
     return render_template('create.html', form=form)
 
 
-@main.route('/plan/<int:id>', methods=['GET', 'POST'])
-def plan(id):
-    '''
-    Show a calendar with the training plan schedule
-    '''
-    plan = Plan.query.filter(
-        Plan.user == current_user._get_current_object()).first()
-
-    workouts = {workout.date: workout for workout in plan.workouts}
-
-    calendars = []
-
-    for i, workout_date in enumerate(workouts):
-        if i == 0:
-            calendar_workout_date = workout_date
-        if i == 0 or is_next_month(calendar_workout_date, workout_date):
-            calendars.append(WorkoutCalendar(
-                workouts).formatmonth(workout_date.year, workout_date.month))
-            calendar_workout_date = workout_date
-
-    return render_template('plan.html', plan=plan, calendars=calendars)
-
-
 @main.route('/workout/<int:id>', methods=['GET', 'POST'])
+@login_required
 def workout(id):
     workout = Workout.query.get_or_404(id)
     return render_template('workout.html', workout=workout)

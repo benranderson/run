@@ -143,20 +143,6 @@ class Workout(db.Model):
         return sum(durations)
 
 
-ProgressionSetting = namedtuple('ProgressionSetting', [
-    'description',
-    'warmupdown',
-    'reps_start',
-    'reps_step',
-    'reps_interval',
-    'reps_max',
-    'duration_start',
-    'duration_step',
-    'duration_interval',
-    'duration_maximum'
-])
-
-
 class Plan(db.Model):
 
     __tablename__ = 'plans'
@@ -242,14 +228,14 @@ class Plan(db.Model):
                                                   intervals_duration_interval=1,
                                                   intervals_duration_maximum=1,
                                                   hillsprint_warmupdown=12,
-                                                  hillsprint_reps_start=5,
-                                                  hillsprint_reps_step=1,
-                                                  hillsprint_reps_interval=1,
-                                                  hillsprint_reps_max=8,
+                                                  hillsprint_reps_start=6,
+                                                  hillsprint_reps_step=2,
+                                                  hillsprint_reps_interval=3,
+                                                  hillsprint_reps_max=10,
                                                   hillsprint_duration_start=0.25,
-                                                  hillsprint_duration_step=0.25,
-                                                  hillsprint_duration_interval=1,
-                                                  hillsprint_duration_maximum=1)
+                                                  hillsprint_duration_step=0,
+                                                  hillsprint_duration_interval=0,
+                                                  hillsprint_duration_maximum=0.25)
         if len(days) > 2:
             start_date = progression_start_date(self.start_date, days[2])
             self.runeasy_progression(start_date,
@@ -306,23 +292,23 @@ class Plan(db.Model):
                 workout_set = WorkoutSet(workout=workout,
                                          reps=1,
                                          exercises=[Exercise(description='easy',
-                                                             duration=warmupdown)])
+                                                             duration=intervals_warmupdown)])
                 reps = reps_or_duration(plan_length=plan_length,
                                         plan_week=week,
                                         workout_week=int(week / 2),
-                                        start=start_reps,
-                                        step=step_reps,
-                                        maximum=max_reps,
-                                        interval=interval_reps)
+                                        start=intervals_reps_start,
+                                        step=intervals_reps_step,
+                                        maximum=intervals_reps_max,
+                                        interval=intervals_reps_interval)
                 workout_set = WorkoutSet(workout=workout,
                                          reps=reps)
                 duration = reps_or_duration(plan_length=plan_length,
                                             plan_week=week,
                                             workout_week=int(week / 2),
-                                            start=start_fast,
-                                            step=step_fast,
-                                            maximum=max_fast,
-                                            interval=interval_fast)
+                                            start=intervals_duration_start,
+                                            step=intervals_duration_step,
+                                            maximum=intervals_duration_maximum,
+                                            interval=intervals_duration_interval)
                 exercise = Exercise(workoutset=workout_set,
                                     description='fast', duration=duration)
                 exercise = Exercise(workoutset=workout_set,
@@ -330,27 +316,35 @@ class Plan(db.Model):
                 workout_set = WorkoutSet(workout=workout,
                                          reps=1,
                                          exercises=[Exercise(description='easy',
-                                                             duration=warmupdown)])
+                                                             duration=intervals_warmupdown)])
             else:
                 workout = Workout(plan=self, date=date, category='hillsprint')
+                workout_set = WorkoutSet(workout=workout,
+                                         reps=1,
+                                         exercises=[Exercise(description='easy',
+                                                             duration=hillsprint_warmupdown)])
                 reps = reps_or_duration(plan_length=plan_length,
                                         plan_week=week,
                                         workout_week=int(week / 2),
-                                        start=start_reps,
-                                        step=step_reps,
-                                        maximum=max_reps,
-                                        interval=interval_reps)
+                                        start=hillsprint_reps_start,
+                                        step=hillsprint_reps_step,
+                                        maximum=hillsprint_reps_max,
+                                        interval=hillsprint_reps_interval)
                 workout_set = WorkoutSet(workout=workout,
                                          reps=reps)
                 duration = reps_or_duration(plan_length=plan_length,
                                             plan_week=week,
                                             workout_week=int(week / 2),
-                                            start=start_fast,
-                                            step=step_fast,
-                                            maximum=max_fast,
-                                            interval=interval_fast)
+                                            start=hillsprint_duration_start,
+                                            step=hillsprint_duration_step,
+                                            maximum=hillsprint_duration_maximum,
+                                            interval=hillsprint_duration_interval)
                 exercise = Exercise(workoutset=workout_set,
                                     description='hillsprint', duration=duration)
+                workout_set = WorkoutSet(workout=workout,
+                                         reps=1,
+                                         exercises=[Exercise(description='easy',
+                                                             duration=hillsprint_warmupdown)])
 
 
 class MyView(BaseView):
