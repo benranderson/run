@@ -116,6 +116,10 @@ h6,
 
 /* Page-level styles */
 
+.gif > a {
+  padding-right: 15px;
+}
+
 .gif > img {
   width: 55px;
   height: 55px;
