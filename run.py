@@ -49,32 +49,6 @@ def seeddb():
                   distance=EVENTS[event]['distance'],
                   date=date)
         db.session.add(e)
-
-    PLANS = json.load(open('plans.json'))
-    for level in PLANS:
-        ps = PlanSetting(distance='5k', level=level)
-        for day in PLANS[level]:
-            pd = PlanDay(plan_setting=ps)
-            for p in day:
-                prog = Progression(plan_day=pd,
-                                   category=p['category'],
-                                   warmup=p['warmup'],
-                                   warmdown=p['warmdown'])
-                for wss in p['workoutset_settings']:
-                    wsset = WorkoutSetSetting(progression=prog,
-                                              reps_start=wss['reps_start'],
-                                              reps_step=wss['reps_step'],
-                                              reps_step_interval=wss['reps_step_interval'],
-                                              reps_max=wss['reps_max'])
-                    for es in wss['exercise_settings']:
-                        eset = ExerciseSetting(workoutset_setting=wsset,
-                                               description=es['description'],
-                                               duration_start=es['duration_start'],
-                                               duration_step=es['duration_step'],
-                                               duration_step_interval=es['duration_step_interval'],
-                                               duration_max=es['duration_max'])
-
-    db.session.add(ps)
     db.session.commit()
 
 
