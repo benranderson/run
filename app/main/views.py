@@ -22,19 +22,22 @@ def index():
 @login_required
 def user(username):
     user = User.query.filter_by(username=username).first_or_404()
-    plan = Plan.query.filter_by(user=user).first_or_404()
+    plan = Plan.query.filter_by(user=user).first()
 
-    workouts = {workout.date: workout for workout in plan.workouts}
+    if plan:
+        workouts = {workout.date: workout for workout in plan.workouts}
 
-    calendars = []
+        calendars = []
 
-    for i, workout_date in enumerate(workouts):
-        if i == 0:
-            calendar_workout_date = workout_date
-        if i == 0 or is_next_month(calendar_workout_date, workout_date):
-            calendars.append(WorkoutCalendar(
-                workouts).formatmonth(workout_date.year, workout_date.month))
-            calendar_workout_date = workout_date
+        for i, workout_date in enumerate(workouts):
+            if i == 0:
+                calendar_workout_date = workout_date
+            if i == 0 or is_next_month(calendar_workout_date, workout_date):
+                calendars.append(WorkoutCalendar(
+                    workouts).formatmonth(workout_date.year, workout_date.month))
+                calendar_workout_date = workout_date
+    else:
+        calendars = False
 
     return render_template('user.html', user=user, plan=plan,
                            calendars=calendars)

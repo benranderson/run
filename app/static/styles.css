@@ -47,6 +47,10 @@ h6,
   text-align: center;
 }
 
+.form-group {
+  margin-bottom: 25px;
+}
+
 /* Workout buttons */
 
 .btn-event {
