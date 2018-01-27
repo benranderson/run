@@ -2,7 +2,7 @@
 }}{% endblock %} {% block page_content %}
 <div>
     <p>
-        <a href="{{ url_for('main.user', username=current_user.username) }}">
+        <a href="{{ url_for('main.user', id=current_user.id) }}">
             <button type="button" class="btn btn-default">Back</button>
         </a>
     </p>

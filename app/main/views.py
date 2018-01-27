@@ -18,10 +18,10 @@ def index():
     return render_template('index.html', events=events)
 
 
-@main.route('/user/<username>', methods=['GET', 'POST'])
+@main.route('/user/<int:id>', methods=['GET', 'POST'])
 @login_required
-def user(username):
-    user = User.query.filter_by(username=username).first_or_404()
+def user(id):
+    user = User.query.filter_by(id=id).first_or_404()
     plan = Plan.query.filter_by(user=user).first()
 
     if plan:
@@ -62,7 +62,7 @@ def create():
         plan.create(days)
         db.session.commit()
         flash('Plan created.')
-        return redirect(url_for('.user', username=current_user.username))
+        return redirect(url_for('.user', id=current_user.id))
     return render_template('create.html', form=form)
 
 

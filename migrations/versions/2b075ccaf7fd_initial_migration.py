@@ -1,8 +1,8 @@
 """initial migration
 
-Revision ID: 53069287b2e6
+Revision ID: 2b075ccaf7fd
 Revises: 
-Create Date: 2018-01-25 20:13:47.622722
+Create Date: 2018-01-27 17:34:11.673227
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '53069287b2e6'
+revision = '2b075ccaf7fd'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -28,12 +28,14 @@ def upgrade():
     op.create_table('users',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('email', sa.String(length=64), nullable=True),
-    sa.Column('username', sa.String(length=64), nullable=True),
+    sa.Column('first_name', sa.String(length=64), nullable=True),
+    sa.Column('second_name', sa.String(length=64), nullable=True),
     sa.Column('password_hash', sa.String(length=128), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_users_email'), 'users', ['email'], unique=True)
-    op.create_index(op.f('ix_users_username'), 'users', ['username'], unique=True)
+    op.create_index(op.f('ix_users_first_name'), 'users', ['first_name'], unique=True)
+    op.create_index(op.f('ix_users_second_name'), 'users', ['second_name'], unique=True)
     op.create_table('plans',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('level', sa.String(length=64), nullable=True),
@@ -77,7 +79,8 @@ def downgrade():
     op.drop_table('workoutsets')
     op.drop_table('workouts')
     op.drop_table('plans')
-    op.drop_index(op.f('ix_users_username'), table_name='users')
+    op.drop_index(op.f('ix_users_second_name'), table_name='users')
+    op.drop_index(op.f('ix_users_first_name'), table_name='users')
     op.drop_index(op.f('ix_users_email'), table_name='users')
     op.drop_table('users')
     op.drop_table('events')

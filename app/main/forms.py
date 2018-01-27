@@ -4,11 +4,6 @@ from wtforms import StringField, SubmitField, SelectField, SelectMultipleField, 
 from wtforms.validators import DataRequired
 
 
-class UserForm(FlaskForm):
-    username = StringField('What is your name?', validators=[DataRequired()])
-    submit = SubmitField('Submit')
-
-
 class PlanForm(FlaskForm):
     event_id = SelectField('Which event are you training for?', coerce=int)
     level = SelectField('What is your current ability level?',

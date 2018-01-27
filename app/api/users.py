@@ -21,8 +21,8 @@ def get_users():
 @api.route('/users', methods=['POST'])
 def create_user():
     data = request.get_json() or {}
-    if 'username' not in data or 'email' not in data or 'password' not in data:
-        return bad_request('must include username, email and password fields')
+    if 'first_name' not in data or 'second_name' not in data 'email' not in data or 'password' not in data:
+        return bad_request('must include first_name, second_name , email and password fields')
     if User.query.filter_by(email=data['email']).first():
         return bad_request('please use a different email address')
     user = User()
@@ -39,9 +39,9 @@ def create_user():
 def update_user(id):
     user = User.query.get_or_404(id)
     data = request.get_json() or {}
-    if 'username' in data and data['username'] != user.username and \
-            User.query.filter_by(username=data['username']).first():
-        return bad_request('please use a different username')
+    # if 'first_name' in data and data['first_name'] != user.first_name and \
+    #         User.query.filter_by(first_name=data['first_name']).first():
+    #     return bad_request('please use a different username')
     if 'email' in data and data['email'] != user.email and \
             User.query.filter_by(email=data['email']).first():
         return bad_request('please use a different email address')
