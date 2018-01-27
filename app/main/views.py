@@ -1,9 +1,9 @@
-from flask import render_template, session, redirect, url_for, current_app, \
-    flash, send_file
-from flask_login import current_user, login_required
 from datetime import date, timedelta
 from ics import Calendar
 from ics import Event as icsEvent
+from flask import render_template, session, redirect, url_for, current_app, \
+    flash, send_file
+from flask_login import current_user, login_required
 from .. import db
 from ..models import User, Event, Plan, Workout
 from ..email import send_email

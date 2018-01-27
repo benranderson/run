@@ -1,6 +1,7 @@
 from datetime import datetime, date, timedelta
 from collections import namedtuple
 from itertools import cycle
+from flask import url_for
 from flask_admin import BaseView, expose
 from flask_admin.contrib.sqla import ModelView
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -13,12 +14,36 @@ from .builder import weeks_between_dates, progression_start_date, \
 from pprint import pprint
 
 
+class PaginatedAPIMixin(object):
+    @staticmethod
+    def to_collection_dict(query, page, per_page, endpoint, **kwargs):
+        resources = query.paginate(page, per_page, False)
+        data = {
+            'items': [item.to_dict() for item in resources.items],
+            '_meta': {
+                'page': page,
+                'per_page': per_page,
+                'total_pages': resources.pages,
+                'total_items': resources.total
+            },
+            '_links': {
+                'self': url_for(endpoint, page=page, per_page=per_page,
+                                **kwargs),
+                'next': url_for(endpoint, page=page + 1, per_page=per_page,
+                                **kwargs) if resources.has_next else None,
+                'prev': url_for(endpoint, page=page - 1, per_page=per_page,
+                                **kwargs) if resources.has_next else None
+            }
+        }
+        return data
+
+
 @login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(int(user_id))
+def load_user(id):
+    return User.query.get(int(id))
 
 
-class User(UserMixin, db.Model):
+class User(UserMixin, PaginatedAPIMixin, db.Model):
 
     __tablename__ = 'users'
 
@@ -33,16 +58,30 @@ class User(UserMixin, db.Model):
     def __repr__(self):
         return f'< {self.__class__.__name__} {self.username}>'
 
-    @property
-    def password(self):
-        raise AttributeError('password is not a readable attribute')
-
-    @password.setter
-    def password(self, password):
+    def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
-    def verify_password(self, password):
+    def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    def to_dict(self, include_email=False):
+        data = {
+            'id': self.id,
+            'username': self.username,
+            '_links': {
+                'self': url_for('api.get_user', id=self.id),
+            }
+        }
+        if include_email:
+            data['email'] = self.email
+        return data
+
+    def from_dict(self, data, new_user=False):
+        for field in ['username', 'email']:
+            if field in data:
+                setattr(self, field, data[field])
+        if new_user and 'password' in data:
+            self.set_password(data['password'])
 
 
 class Event(db.Model):
@@ -112,7 +151,7 @@ class WorkoutSet(db.Model):
         return self.reps * sum(durations)
 
 
-class Workout(db.Model):
+class Workout(PaginatedAPIMixin, db.Model):
 
     __tablename__ = 'workouts'
 
@@ -141,6 +180,25 @@ class Workout(db.Model):
     def duration(self):
         durations = [workoutset.duration for workoutset in self.workoutsets]
         return sum(durations)
+
+    def to_dict(self):
+        data = {
+            'id': self.id,
+            'date': self.date.iso_format() + 'Z',
+            'category': self.category,
+            'rest': self.rest,
+            '_links': {
+                'self': url_for('api.get_workout', id=self.id),
+            }
+        }
+        return data
+
+    def from_dict(self, data, new_user=False):
+        for field in ['usermame', 'email']:
+            if field in data:
+                setattr(self, field, data[field])
+        if new_user and 'password' in data:
+            self.password(data['password'])
 
 
 class Plan(db.Model):
