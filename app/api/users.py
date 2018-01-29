@@ -21,8 +21,8 @@ def get_users():
 @api.route('/users', methods=['POST'])
 def create_user():
     data = request.get_json() or {}
-    if 'first_name' not in data or 'second_name' not in data or 'email' not in data or 'password' not in data:
-        return bad_request('must include first_name, second_name , email and password fields')
+    if 'first_name' not in data or 'last_name' not in data or 'email' not in data or 'password' not in data:
+        return bad_request('must include first_name, last_name , email and password fields')
     if User.query.filter_by(email=data['email']).first():
         return bad_request('please use a different email address')
     user = User()

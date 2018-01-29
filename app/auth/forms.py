@@ -18,8 +18,8 @@ class RegistrationForm(FlaskForm):
                                              Email()])
     first_name = StringField('First Name', validators=[DataRequired(),
                                                        Length(1, 64)])
-    second_name = StringField('Second Name', validators=[DataRequired(),
-                                                         Length(1, 64)])
+    last_name = StringField('Last Name', validators=[DataRequired(),
+                                                     Length(1, 64)])
     # username = StringField('Username', validators=[
     #     DataRequired(), Length(1, 64),
     #     Regexp('^[A-Za-z][A-Za-z0-9_.]*$', 0,

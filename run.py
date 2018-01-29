@@ -39,7 +39,7 @@ def createdb(drop_first):
 def seeddb():
     user = User(email='ben@domain.com',
                 first_name='Ben',
-                second_name='Randerson')
+                last_name='Randerson')
     user.set_password('test')
     db.session.add(user)
     EVENTS = json.load(open('events.json'))
