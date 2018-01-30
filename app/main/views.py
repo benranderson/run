@@ -14,7 +14,8 @@ from .calendar import WorkoutCalendar
 
 @main.route('/', methods=['GET', 'POST'])
 def index():
-    events = Event.query.all()
+    events = [event for event in Event.query.order_by(
+        'date').all() if event.date >= date.today()]
     return render_template('index.html', events=events)
 
 
