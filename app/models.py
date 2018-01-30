@@ -1,4 +1,6 @@
 from datetime import datetime, date, timedelta
+from dateutil import parser as datetime_parser
+from dateutil.tz import tzutc
 from collections import namedtuple
 from itertools import cycle
 from flask import url_for
@@ -86,7 +88,7 @@ class User(UserMixin, PaginatedAPIMixin, db.Model):
             self.set_password(data['password'])
 
 
-class Event(db.Model):
+class Event(PaginatedAPIMixin, db.Model):
 
     __tablename__ = 'events'
 
@@ -99,13 +101,24 @@ class Event(db.Model):
     def __repr__(self):
         return f'<{self.__class__.__name__} {self.name} ({self.distance})>'
 
-    def import_data(self, data):
-        try:
-            self.name = data['name']
-            self.distance = data['distance']
-        except KeyError as e:
-            raise ValidationError('Invalid event: missing ' + e.args[0])
-        return self
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'distance': self.distance,
+            'date': self.date.isoformat() + 'Z',
+            '_links': {
+                'self': url_for('api.get_event', id=self.id),
+            }
+        }
+
+    def from_dict(self, data):
+        for field in ['name', 'distance']:
+            if field in data:
+                setattr(self, field, data[field])
+        if 'date' in data:
+            self.date = datetime_parser.parse(data['date']).astimezone(
+                tzutc()).replace(tzinfo=None)
 
 
 class Exercise(db.Model):

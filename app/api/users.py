@@ -39,9 +39,6 @@ def create_user():
 def update_user(id):
     user = User.query.get_or_404(id)
     data = request.get_json() or {}
-    # if 'first_name' in data and data['first_name'] != user.first_name and \
-    #         User.query.filter_by(first_name=data['first_name']).first():
-    #     return bad_request('please use a different username')
     if 'email' in data and data['email'] != user.email and \
             User.query.filter_by(email=data['email']).first():
         return bad_request('please use a different email address')
