@@ -5,8 +5,7 @@ from itertools import groupby
 
 class WorkoutCalendar(HTMLCalendar):
     '''
-    A workout calendar renderer, see this blog entry for details:
-    * http://uggedal.com/journal/creating-a-flexible-monthly-calendar-in-django/
+    A workout calendar renderer
     '''
 
     def __init__(self, workouts, *args, **kwargs):
@@ -30,23 +29,10 @@ class WorkoutCalendar(HTMLCalendar):
 
         # Day with a workout
         workout = self.workouts.get(date_obj)
-
-        formatted_date = date_obj.strftime('%d %b %Y')
-        description = ''
-        for workoutset in workout.workoutsets:
-            description += f'<p>{workoutset}</p>'
         body = []
-        # exercises_html = "<br />".join(workout.exercises.split("\n"))
         body.append(repr(day))
         body.append(
             '<a href="/workout/{0}"><button type="button" class="btn btn-{1} btn-block">{2} ({3:,.0f}mins)</button></a>'.format(workout.id, workout.category, workout.category.capitalize(), workout.duration))
-        # body.append('<button type="button" class="btn btn-{0} btn-block"'
-        #             'data-toggle="modal" data-target="#workoutModal"'
-        #             'data-title="{1} Workout on {2}" data-description="{3}">'
-        #             '{1}</button>'.format(workout.category,
-        #                                   workout.category.capitalize(),
-        #                                   formatted_date,
-        #                                   description))
         return self.day_cell(cssclass, '{0}'.format(''.join(body)))
 
     def formatmonth(self, year, month, withyear=False):

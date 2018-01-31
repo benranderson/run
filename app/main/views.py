@@ -24,6 +24,7 @@ def index():
 def user(id):
     user = User.query.filter_by(id=id).first_or_404()
     plan = Plan.query.filter_by(user=user).first()
+    calendars = False
 
     if plan:
         workouts = {workout.date: workout for workout in plan.workouts}
@@ -37,8 +38,6 @@ def user(id):
                 calendars.append(WorkoutCalendar(
                     workouts).formatmonth(workout_date.year, workout_date.month))
                 calendar_workout_date = workout_date
-    else:
-        calendars = False
 
     return render_template('user.html', user=user, plan=plan,
                            calendars=calendars)

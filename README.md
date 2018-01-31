@@ -1,7 +1,9 @@
-# Training Plan
+# Run
 > Create a bespoke running training plan
 
 Web application for creating a bespoke running training plan for your event and ability level.
+
+Hosted at <https://running-plan.herokuapp.com>
 
 ## Features
 

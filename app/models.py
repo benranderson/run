@@ -13,8 +13,6 @@ from .exceptions import ValidationError
 from .builder import weeks_between_dates, progression_start_date, \
     reps_or_duration, rest_week
 
-from pprint import pprint
-
 
 class PaginatedAPIMixin(object):
     @staticmethod
@@ -208,12 +206,13 @@ class Workout(PaginatedAPIMixin, db.Model):
         }
         return data
 
-    def from_dict(self, data, new_user=False):
-        for field in ['usermame', 'email']:
+    def from_dict(self, data):
+        for field in ['category', 'rest']:
             if field in data:
                 setattr(self, field, data[field])
-        if new_user and 'password' in data:
-            self.password(data['password'])
+        if 'date' in data:
+            self.date = datetime_parser.parse(data['date']).astimezone(
+                tzutc()).replace(tzinfo=None)
 
 
 class Plan(db.Model):
@@ -229,6 +228,428 @@ class Plan(db.Model):
     event_id = db.Column(db.Integer, db.ForeignKey('events.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
+    @property
+    def progressions(self):
+        plans = {
+            '5k': {
+                'Beginner': [
+                    (self.runeasy_progression, {
+                        'start': 25,
+                        'step': 5,
+                        'interval': 3,
+                        'maximum': 35
+                    }),
+                    (self.intervals_hillsprint_progression, {
+                        'intervals_warmupdown': 10,
+                        'intervals_reps_start': 5,
+                        'intervals_reps_step': 1,
+                        'intervals_reps_interval': 1,
+                        'intervals_reps_max': 8,
+                        'intervals_duration_start': 0.25,
+                        'intervals_duration_step': 0.25,
+                        'intervals_duration_interval': 1,
+                        'intervals_duration_maximum': 1,
+                        'hillsprint_warmupdown': 12,
+                        'hillsprint_reps_start': 6,
+                        'hillsprint_reps_step': 2,
+                        'hillsprint_reps_interval': 3,
+                        'hillsprint_reps_max': 10,
+                        'hillsprint_duration_start': 0.25,
+                        'hillsprint_duration_step': 0,
+                        'hillsprint_duration_interval': 0,
+                        'hillsprint_duration_maximum': 0.25
+                    }),
+                    (self.runeasy_progression, {
+                        'start': 30,
+                        'step': 5,
+                        'interval': 3,
+                        'maximum': 35
+                    })
+                ],
+                'Intermediate': [
+                    (self.runeasy_progression, {
+                        'start': 25,
+                        'step': 5,
+                        'interval': 3,
+                        'maximum': 35
+                    }),
+                    (self.intervals_hillsprint_progression, {
+                        'intervals_warmupdown': 10,
+                        'intervals_reps_start': 5,
+                        'intervals_reps_step': 1,
+                        'intervals_reps_interval': 1,
+                        'intervals_reps_max': 8,
+                        'intervals_duration_start': 0.25,
+                        'intervals_duration_step': 0.25,
+                        'intervals_duration_interval': 1,
+                        'intervals_duration_maximum': 1,
+                        'hillsprint_warmupdown': 12,
+                        'hillsprint_reps_start': 6,
+                        'hillsprint_reps_step': 2,
+                        'hillsprint_reps_interval': 3,
+                        'hillsprint_reps_max': 10,
+                        'hillsprint_duration_start': 0.25,
+                        'hillsprint_duration_step': 0,
+                        'hillsprint_duration_interval': 0,
+                        'hillsprint_duration_maximum': 0.25
+                    }),
+                    (self.runeasy_progression, {
+                        'start': 30,
+                        'step': 5,
+                        'interval': 3,
+                        'maximum': 35
+                    })
+                ],
+                'Advanced': [
+                    (self.runeasy_progression, {
+                        'start': 25,
+                        'step': 5,
+                        'interval': 3,
+                        'maximum': 35
+                    }),
+                    (self.intervals_hillsprint_progression, {
+                        'intervals_warmupdown': 10,
+                        'intervals_reps_start': 5,
+                        'intervals_reps_step': 1,
+                        'intervals_reps_interval': 1,
+                        'intervals_reps_max': 8,
+                        'intervals_duration_start': 0.25,
+                        'intervals_duration_step': 0.25,
+                        'intervals_duration_interval': 1,
+                        'intervals_duration_maximum': 1,
+                        'hillsprint_warmupdown': 12,
+                        'hillsprint_reps_start': 6,
+                        'hillsprint_reps_step': 2,
+                        'hillsprint_reps_interval': 3,
+                        'hillsprint_reps_max': 10,
+                        'hillsprint_duration_start': 0.25,
+                        'hillsprint_duration_step': 0,
+                        'hillsprint_duration_interval': 0,
+                        'hillsprint_duration_maximum': 0.25
+                    }),
+                    (self.runeasy_progression, {
+                        'start': 30,
+                        'step': 5,
+                        'interval': 3,
+                        'maximum': 35
+                    })
+                ],
+            },
+            '10k': {
+                'Beginner': [
+                    (self.runeasy_progression, {
+                        'start': 25,
+                        'step': 5,
+                        'interval': 3,
+                        'maximum': 35
+                    }),
+                    (self.intervals_hillsprint_progression, {
+                        'intervals_warmupdown': 10,
+                        'intervals_reps_start': 5,
+                        'intervals_reps_step': 1,
+                        'intervals_reps_interval': 1,
+                        'intervals_reps_max': 8,
+                        'intervals_duration_start': 0.25,
+                        'intervals_duration_step': 0.25,
+                        'intervals_duration_interval': 1,
+                        'intervals_duration_maximum': 1,
+                        'hillsprint_warmupdown': 12,
+                        'hillsprint_reps_start': 6,
+                        'hillsprint_reps_step': 2,
+                        'hillsprint_reps_interval': 3,
+                        'hillsprint_reps_max': 10,
+                        'hillsprint_duration_start': 0.25,
+                        'hillsprint_duration_step': 0,
+                        'hillsprint_duration_interval': 0,
+                        'hillsprint_duration_maximum': 0.25
+                    }),
+                    (self.runeasy_progression, {
+                        'start': 30,
+                        'step': 5,
+                        'interval': 3,
+                        'maximum': 35
+                    })
+                ],
+                'Intermediate': [
+                    (self.runeasy_progression, {
+                        'start': 25,
+                        'step': 5,
+                        'interval': 3,
+                        'maximum': 35
+                    }),
+                    (self.intervals_hillsprint_progression, {
+                        'intervals_warmupdown': 10,
+                        'intervals_reps_start': 5,
+                        'intervals_reps_step': 1,
+                        'intervals_reps_interval': 1,
+                        'intervals_reps_max': 8,
+                        'intervals_duration_start': 0.25,
+                        'intervals_duration_step': 0.25,
+                        'intervals_duration_interval': 1,
+                        'intervals_duration_maximum': 1,
+                        'hillsprint_warmupdown': 12,
+                        'hillsprint_reps_start': 6,
+                        'hillsprint_reps_step': 2,
+                        'hillsprint_reps_interval': 3,
+                        'hillsprint_reps_max': 10,
+                        'hillsprint_duration_start': 0.25,
+                        'hillsprint_duration_step': 0,
+                        'hillsprint_duration_interval': 0,
+                        'hillsprint_duration_maximum': 0.25
+                    }),
+                    (self.runeasy_progression, {
+                        'start': 30,
+                        'step': 5,
+                        'interval': 3,
+                        'maximum': 35
+                    })
+                ],
+                'Advanced': [
+                    (self.runeasy_progression, {
+                        'start': 25,
+                        'step': 5,
+                        'interval': 3,
+                        'maximum': 35
+                    }),
+                    (self.intervals_hillsprint_progression, {
+                        'intervals_warmupdown': 10,
+                        'intervals_reps_start': 5,
+                        'intervals_reps_step': 1,
+                        'intervals_reps_interval': 1,
+                        'intervals_reps_max': 8,
+                        'intervals_duration_start': 0.25,
+                        'intervals_duration_step': 0.25,
+                        'intervals_duration_interval': 1,
+                        'intervals_duration_maximum': 1,
+                        'hillsprint_warmupdown': 12,
+                        'hillsprint_reps_start': 6,
+                        'hillsprint_reps_step': 2,
+                        'hillsprint_reps_interval': 3,
+                        'hillsprint_reps_max': 10,
+                        'hillsprint_duration_start': 0.25,
+                        'hillsprint_duration_step': 0,
+                        'hillsprint_duration_interval': 0,
+                        'hillsprint_duration_maximum': 0.25
+                    }),
+                    (self.runeasy_progression, {
+                        'start': 30,
+                        'step': 5,
+                        'interval': 3,
+                        'maximum': 35
+                    })
+                ]
+            },
+            'half': {
+                'Beginner': [
+                    (self.runeasy_progression, {
+                        'start': 25,
+                        'step': 5,
+                        'interval': 3,
+                        'maximum': 35
+                    }),
+                    (self.intervals_hillsprint_progression, {
+                        'intervals_warmupdown': 10,
+                        'intervals_reps_start': 5,
+                        'intervals_reps_step': 1,
+                        'intervals_reps_interval': 1,
+                        'intervals_reps_max': 8,
+                        'intervals_duration_start': 0.25,
+                        'intervals_duration_step': 0.25,
+                        'intervals_duration_interval': 1,
+                        'intervals_duration_maximum': 1,
+                        'hillsprint_warmupdown': 12,
+                        'hillsprint_reps_start': 6,
+                        'hillsprint_reps_step': 2,
+                        'hillsprint_reps_interval': 3,
+                        'hillsprint_reps_max': 10,
+                        'hillsprint_duration_start': 0.25,
+                        'hillsprint_duration_step': 0,
+                        'hillsprint_duration_interval': 0,
+                        'hillsprint_duration_maximum': 0.25
+                    }),
+                    (self.runeasy_progression, {
+                        'start': 30,
+                        'step': 5,
+                        'interval': 3,
+                        'maximum': 35
+                    })
+                ],
+                'Intermediate': [
+                    (self.runeasy_progression, {
+                        'start': 25,
+                        'step': 5,
+                        'interval': 3,
+                        'maximum': 35
+                    }),
+                    (self.intervals_hillsprint_progression, {
+                        'intervals_warmupdown': 10,
+                        'intervals_reps_start': 5,
+                        'intervals_reps_step': 1,
+                        'intervals_reps_interval': 1,
+                        'intervals_reps_max': 8,
+                        'intervals_duration_start': 0.25,
+                        'intervals_duration_step': 0.25,
+                        'intervals_duration_interval': 1,
+                        'intervals_duration_maximum': 1,
+                        'hillsprint_warmupdown': 12,
+                        'hillsprint_reps_start': 6,
+                        'hillsprint_reps_step': 2,
+                        'hillsprint_reps_interval': 3,
+                        'hillsprint_reps_max': 10,
+                        'hillsprint_duration_start': 0.25,
+                        'hillsprint_duration_step': 0,
+                        'hillsprint_duration_interval': 0,
+                        'hillsprint_duration_maximum': 0.25
+                    }),
+                    (self.runeasy_progression, {
+                        'start': 30,
+                        'step': 5,
+                        'interval': 3,
+                        'maximum': 35
+                    })
+                ],
+                'Advanced': [
+                    (self.runeasy_progression, {
+                        'start': 25,
+                        'step': 5,
+                        'interval': 3,
+                        'maximum': 35
+                    }),
+                    (self.intervals_hillsprint_progression, {
+                        'intervals_warmupdown': 10,
+                        'intervals_reps_start': 5,
+                        'intervals_reps_step': 1,
+                        'intervals_reps_interval': 1,
+                        'intervals_reps_max': 8,
+                        'intervals_duration_start': 0.25,
+                        'intervals_duration_step': 0.25,
+                        'intervals_duration_interval': 1,
+                        'intervals_duration_maximum': 1,
+                        'hillsprint_warmupdown': 12,
+                        'hillsprint_reps_start': 6,
+                        'hillsprint_reps_step': 2,
+                        'hillsprint_reps_interval': 3,
+                        'hillsprint_reps_max': 10,
+                        'hillsprint_duration_start': 0.25,
+                        'hillsprint_duration_step': 0,
+                        'hillsprint_duration_interval': 0,
+                        'hillsprint_duration_maximum': 0.25
+                    }),
+                    (self.runeasy_progression, {
+                        'start': 30,
+                        'step': 5,
+                        'interval': 3,
+                        'maximum': 35
+                    })
+                ],
+            },
+            'full': {
+                'Beginner': [
+                    (self.runeasy_progression, {
+                        'start': 25,
+                        'step': 5,
+                        'interval': 3,
+                        'maximum': 35
+                    }),
+                    (self.intervals_hillsprint_progression, {
+                        'intervals_warmupdown': 10,
+                        'intervals_reps_start': 5,
+                        'intervals_reps_step': 1,
+                        'intervals_reps_interval': 1,
+                        'intervals_reps_max': 8,
+                        'intervals_duration_start': 0.25,
+                        'intervals_duration_step': 0.25,
+                        'intervals_duration_interval': 1,
+                        'intervals_duration_maximum': 1,
+                        'hillsprint_warmupdown': 12,
+                        'hillsprint_reps_start': 6,
+                        'hillsprint_reps_step': 2,
+                        'hillsprint_reps_interval': 3,
+                        'hillsprint_reps_max': 10,
+                        'hillsprint_duration_start': 0.25,
+                        'hillsprint_duration_step': 0,
+                        'hillsprint_duration_interval': 0,
+                        'hillsprint_duration_maximum': 0.25
+                    }),
+                    (self.runeasy_progression, {
+                        'start': 30,
+                        'step': 5,
+                        'interval': 3,
+                        'maximum': 35
+                    })
+                ],
+                'Intermediate': [
+                    (self.runeasy_progression, {
+                        'start': 25,
+                        'step': 5,
+                        'interval': 3,
+                        'maximum': 35
+                    }),
+                    (self.intervals_hillsprint_progression, {
+                        'intervals_warmupdown': 10,
+                        'intervals_reps_start': 5,
+                        'intervals_reps_step': 1,
+                        'intervals_reps_interval': 1,
+                        'intervals_reps_max': 8,
+                        'intervals_duration_start': 0.25,
+                        'intervals_duration_step': 0.25,
+                        'intervals_duration_interval': 1,
+                        'intervals_duration_maximum': 1,
+                        'hillsprint_warmupdown': 12,
+                        'hillsprint_reps_start': 6,
+                        'hillsprint_reps_step': 2,
+                        'hillsprint_reps_interval': 3,
+                        'hillsprint_reps_max': 10,
+                        'hillsprint_duration_start': 0.25,
+                        'hillsprint_duration_step': 0,
+                        'hillsprint_duration_interval': 0,
+                        'hillsprint_duration_maximum': 0.25
+                    }),
+                    (self.runeasy_progression, {
+                        'start': 30,
+                        'step': 5,
+                        'interval': 3,
+                        'maximum': 35
+                    })
+                ],
+                'Advanced': [
+                    (self.runeasy_progression, {
+                        'start': 25,
+                        'step': 5,
+                        'interval': 3,
+                        'maximum': 35
+                    }),
+                    (self.intervals_hillsprint_progression, {
+                        'intervals_warmupdown': 10,
+                        'intervals_reps_start': 5,
+                        'intervals_reps_step': 1,
+                        'intervals_reps_interval': 1,
+                        'intervals_reps_max': 8,
+                        'intervals_duration_start': 0.25,
+                        'intervals_duration_step': 0.25,
+                        'intervals_duration_interval': 1,
+                        'intervals_duration_maximum': 1,
+                        'hillsprint_warmupdown': 12,
+                        'hillsprint_reps_start': 6,
+                        'hillsprint_reps_step': 2,
+                        'hillsprint_reps_interval': 3,
+                        'hillsprint_reps_max': 10,
+                        'hillsprint_duration_start': 0.25,
+                        'hillsprint_duration_step': 0,
+                        'hillsprint_duration_interval': 0,
+                        'hillsprint_duration_maximum': 0.25
+                    }),
+                    (self.runeasy_progression, {
+                        'start': 30,
+                        'step': 5,
+                        'interval': 3,
+                        'maximum': 35
+                    })
+                ]
+            }
+        }
+        return plans[self.event.distance][self.level]
+
     def __repr__(self):
         return f'<{self.__class__.__name__} {self.level}>'
 
@@ -240,89 +661,17 @@ class Plan(db.Model):
         return weeks_between_dates(self.start_date, self.event.date)
 
     def create(self, days):
-
-        plans = {
-            '5k': {
-                'Beginner': self.create_5k_beginner_plan,
-                'Intermediate': self.create_5k_beginner_plan,
-                'Advanced': self.create_5k_beginner_plan,
-            },
-            '10k': {
-                'Beginner': self.create_5k_beginner_plan,
-                'Intermediate': self.create_5k_beginner_plan,
-                'Advanced': self.create_5k_beginner_plan,
-            },
-            'half': {
-                'Beginner': self.create_5k_beginner_plan,
-                'Intermediate': self.create_5k_beginner_plan,
-                'Advanced': self.create_5k_beginner_plan,
-            },
-            'full': {
-                'Beginner': self.create_5k_beginner_plan,
-                'Intermediate': self.create_5k_beginner_plan,
-                'Advanced': self.create_5k_beginner_plan,
-            }
-        }
-
-        plans[self.event.distance][self.level](days)
-
-    def create_5k_beginner_plan(self, days):
         '''
-        Creates beginner training plan
-        - start date
-        - weeks
-        - rest weeks
-        - ramp up 4 weeks
-        - workout priority
-            - day 1: runeasy
-            - day 2: intervals/hillsprint rotation
-            - day 3: runeasy
+        Populate schedule with workouts based on selected plan
         '''
 
+        # determine actual start dates for the selected workout days
         start_dates = [progression_start_date(
             self.start_date, day) for day in days]
 
-        progressions = [self.runeasy_progression,
-                        self.intervals_hillsprint_progression,
-                        self.runeasy_progression]
-
-        params = [
-            {
-                'start': 25,
-                'step': 5,
-                'interval': 3,
-                'maximum': 35
-            },
-            {
-                'intervals_warmupdown': 10,
-                'intervals_reps_start': 5,
-                'intervals_reps_step': 1,
-                'intervals_reps_interval': 1,
-                'intervals_reps_max': 8,
-                'intervals_duration_start': 0.25,
-                'intervals_duration_step': 0.25,
-                'intervals_duration_interval': 1,
-                'intervals_duration_maximum': 1,
-                'hillsprint_warmupdown': 12,
-                'hillsprint_reps_start': 6,
-                'hillsprint_reps_step': 2,
-                'hillsprint_reps_interval': 3,
-                'hillsprint_reps_max': 10,
-                'hillsprint_duration_start': 0.25,
-                'hillsprint_duration_step': 0,
-                'hillsprint_duration_interval': 0,
-                'hillsprint_duration_maximum': 0.25
-            },
-            {
-                'start': 30,
-                'step': 5,
-                'interval': 3,
-                'maximum': 35
-            }
-        ]
-
-        for progression, param, start_date in zip(progressions, params, start_dates):
-            progression(start_date, self.length, **param)
+        # populate workouts based on selected plan
+        for start_date, progression in zip(start_dates, self.progressions):
+            progression[0](start_date, self.length, **progression[1])
 
     def runeasy_progression(self, start_date, plan_length, start, step,
                             interval, maximum):
